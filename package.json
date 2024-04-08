@@ -1,15 +1,16 @@
 {
-  "name": "countdowntimer",
-  "version": "1.0.0",
+  "name": "@saher2006/countdowntimercli",
+  "version": "1.2.0",
   "description": "",
   "main": "index.js",
   "type": "module",
+  "bin":"main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "date-fns": "^3.6.0",
     "inquirer": "^9.2.17",

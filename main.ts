@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import { table } from "console";
 import { getTime } from "date-fns";
 import { getDate } from "date-fns/getDate";
@@ -48,33 +50,48 @@ async function appStart() {
   let hour = parseInt(hourString);
   let min = parseInt(minuteString);
   let sec = parseInt(secondString);
+  setInterval(() => {
+    // set interval function so it update on every one second
+    const targetDateobj = new Date(year, month, day, hour, min, sec); // Pass the TargetTime that we converted into number from string
+    const currentDate = Date.now(); // show  current date
+    let timeDiff = targetDateobj.getTime() - currentDate; // time difference to calculate remaining time
 
-  async function remainingTimeCalculation() {
-    setInterval(() => {
-      // set interval function so it update on every one second
-      const targetDateobj = new Date(year, month, day, hour, min, sec); // Pass the TargetTime that we converted into number from string
-      const currentDate = Date.now(); // show  current date
-      const timeDiff = targetDateobj.getTime() - currentDate; // time difference to calculate remaining time
+    //isolate Days,Hours,min,Sec from timediff
+    let calcDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    let calcHours = Math.floor(
+      (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    let calcmin = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    let calsec = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-      if (timeDiff <= 0) {
+    if (timeDiff <= 0) {
+      console.log("Time has Expired"); // if timedifference less than 0 Program will exit
+      process.exit();
+    }
+
+    if (timeDiff > 0) {
+      if (calcDays > 0) {
+        process.stdout.write(
+          "\r" +
+            `Remaining Time :${calcDays} days  ${calcHours} hours ${calcmin} min ${calsec} sec`
+        );
+      } else if (calcDays <= 0 && calcHours > 0) {
+        process.stdout.write(
+          "\r" +
+            `Remaining Time :  ${calcHours} hours ${calcmin} min ${calsec} sec`
+        );
+      } else if (calcHours <= 0 && calcmin > 0) {
+        process.stdout.write(
+          "\r" + `Remaining Time : ${calcmin} min ${calsec} sec`
+        );
+      } else if (calcmin <= 0 && calsec > 0) {
+        process.stdout.write("\r" + `Remaining Time :  ${calsec} sec`);
+      } else if (timeDiff <= 0) {
         console.log("Time has Expired"); // if timedifference less than 0 Program will exit
         process.exit();
       }
-      //isolate Days,Hours,min,Sec from timediff
-      let calcDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      let calcHours = Math.floor(
-        (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      let calcmin = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      let calsec = Math.floor((timeDiff % (1000 * 60)) / 1000);
-      console.clear();
-      setTimeout(remainingTimeCalculation, 1000);
-      console.log(
-        `Remaining Time : ${calcDays}Days ${calcHours}hours ${calcmin}min ${calsec}sec`
-      );
-    }, 1000);
-  }
-  setTimeout(remainingTimeCalculation);
+    }
+  }, 1000);
 }
 
-appStart(); // start program
+appStart();
